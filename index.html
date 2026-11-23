@@ -1,0 +1,1993 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Canteen Bracelet EGP Wallet & Top-Up</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+          },
+          colors: {
+            surface: '#FFFFFF',
+            canvas: '#F8FAFC',
+            softGray: '#F3F4F6',
+            ink: '#111111',
+            muted: '#6B7280',
+            line: '#E5E7EB',
+            accentBlue: '#2563EB',
+            successGreen: '#059669',
+            successSoft: '#ECFDF5',
+          },
+          boxShadow: {
+            card: '0 6px 24px -8px rgba(17, 17, 17, 0.08)',
+            pill: '0 8px 20px -6px rgba(17, 17, 17, 0.25)',
+          },
+        },
+      },
+    };
+  </script>
+  <style>
+    @keyframes fadeSlideIn {
+      0% {
+        opacity: 0;
+        transform: translateY(8px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .screen-enter {
+      animation: fadeSlideIn 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    /* Hide scrollbars cleanly where horizontal/vertical scroll is used */
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+
+    /* Sculpted wearable canteen bracelet band & strap clasp styling */
+    .bracelet-band {
+      position: relative;
+      border-radius: 36px;
+      background:
+        radial-gradient(circle at 22% 18%, rgba(124, 58, 237, 0.42) 0%, rgba(59, 29, 110, 0.25) 38%, transparent 68%),
+        linear-gradient(135deg, #1E1B33 0%, #13111E 48%, #09090F 100%);
+      box-shadow:
+        0 14px 28px -10px rgba(17, 17, 17, 0.36),
+        inset 0 1.5px 1px rgba(255, 255, 255, 0.24),
+        inset 0 -3px 6px rgba(0, 0, 0, 0.55);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+    }
+
+    /* Subtle silicone band ridge & recessed smart display window */
+    .bracelet-band::before {
+      content: '';
+      position: absolute;
+      inset: 5px;
+      border-radius: 31px;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      pointer-events: none;
+    }
+
+    .bracelet-display-well {
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.06) 0%, rgba(10, 10, 16, 0.45) 100%);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.45);
+    }
+
+    .bracelet-clasp-left,
+    .bracelet-clasp-right {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 10px;
+      height: 54%;
+      border-radius: 9999px;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.28), rgba(255, 255, 255, 0.06));
+      opacity: 0.55;
+      pointer-events: none;
+    }
+
+    .bracelet-clasp-left {
+      left: -3px;
+    }
+
+    .bracelet-clasp-right {
+      right: -3px;
+    }
+
+    /* Sculpted container for the 3D-like black silicone NFC bracelet illustration */
+    .bracelet-visual-stage {
+      background:
+        radial-gradient(circle at 78% 24%, rgba(139, 92, 246, 0.28) 0%, rgba(49, 26, 94, 0.14) 45%, transparent 72%),
+        linear-gradient(135deg, #171526 0%, #100F1A 55%, #09090E 100%);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      box-shadow:
+        0 14px 30px -10px rgba(17, 17, 17, 0.35),
+        inset 0 1px 0 rgba(255, 255, 255, 0.14);
+    }
+  </style>
+</head>
+<body class="bg-[#F2F3F5] text-ink font-sans antialiased min-h-screen flex justify-center selection:bg-ink selection:text-white">
+  <!-- Mobile App Container -->
+  <div
+    id="appShell"
+    class="w-full max-w-[430px] min-h-screen sm:min-h-[844px] sm:my-5 bg-surface sm:rounded-[38px] sm:shadow-2xl sm:border sm:border-line flex flex-col justify-between relative overflow-hidden"
+  >
+    <!-- Top Navigation Bar (Shared across Wallet, Top Up, Choose Payment, Enter PIN) -->
+    <header id="topBar" class="px-5 pt-5 pb-3 bg-surface flex items-center justify-between shrink-0 z-20">
+      <button
+        id="backBtn"
+        type="button"
+        aria-label="Go back"
+        class="w-9 h-9 rounded-full hover:bg-softGray active:scale-95 flex items-center justify-center text-ink transition"
+      >
+        <svg id="backIcon" class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+        </svg>
+      </button>
+
+      <h1 id="topBarTitle" class="text-[16px] font-bold tracking-[-0.015em] text-ink">
+        Bracelet Wallet
+      </h1>
+
+      <button
+        id="moreActionBtn"
+        type="button"
+        aria-label="Bracelet info and reset demo"
+        class="w-9 h-9 rounded-full hover:bg-softGray active:scale-95 flex items-center justify-center text-ink transition"
+      >
+        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+          <circle cx="5" cy="12" r="1.8" />
+          <circle cx="12" cy="12" r="1.8" />
+          <circle cx="19" cy="12" r="1.8" />
+        </svg>
+      </button>
+    </header>
+
+    <!-- Main Screen Viewport -->
+    <div id="viewport" class="flex-1 flex flex-col justify-between overflow-y-auto no-scrollbar">
+      <!-- ===================================================================== -->
+      <!-- SCREEN 1: WALLET DASHBOARD (Wearable Bracelet Card + History)        -->
+      <!-- ===================================================================== -->
+      <section id="walletScreen" class="screen-enter flex-1 px-5 pt-2 pb-6 flex flex-col gap-5">
+        <!-- Compact Bracelet Account Switcher + Add Account & Configure Controls -->
+        <div class="flex items-center gap-2 overflow-x-auto no-scrollbar pb-0.5" role="tablist" aria-label="Child bracelet accounts">
+          <div id="accountSwitcherBar" class="flex items-center gap-2 shrink-0">
+            <!-- Populated dynamically with child bracelet pills + Add Account -->
+          </div>
+        </div>
+
+        <!-- Wearable Silicone NFC Bracelet Illustration + Wallet Readout Card -->
+        <div class="bracelet-visual-stage rounded-[28px] p-4 text-white relative overflow-hidden">
+          <!-- Top Bar inside Bracelet Card: Child Name + ID + NFC Active Pill -->
+          <div class="relative z-10 flex items-center justify-between gap-3 mb-2.5">
+            <div class="flex items-center gap-1.5 flex-1 min-w-0">
+              <svg class="w-3.5 h-3.5 text-purple-300 shrink-0" fill="none" stroke="currentColor" stroke-width="2.1" viewBox="0 0 24 24" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071c3.904-3.905 10.236-3.905 14.141 0M1.394 9.393c5.857-5.857 15.355-5.857 21.213 0" />
+              </svg>
+              <span class="text-[10.5px] sm:text-[11px] font-semibold text-white/85 tracking-tight whitespace-nowrap truncate">
+                <span id="braceletOwnerLabel" class="font-bold text-white">Layla (Daughter)</span> · <span id="braceletTagLabel" class="font-bold text-white/90">#CB-4092</span>
+              </span>
+            </div>
+
+            <span
+              style="padding: 5px 12px;"
+              class="inline-flex items-center gap-1.5 text-[10.5px] sm:text-[11px] font-semibold rounded-full bg-white/15 border border-white/15 text-white whitespace-nowrap shrink-0"
+            >
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 shrink-0"></span>
+              <span>NFC Active</span>
+            </span>
+          </div>
+
+          <!-- Split Layout: Left Balance & Top Up CTA, Right Angled Black Silicone NFC Wristband Drawing -->
+          <div class="relative z-10 flex items-center justify-between gap-2">
+            <div class="min-w-0 flex-1 py-1">
+              <p
+                id="walletBalanceDisplay"
+                class="text-[23px] sm:text-[26px] font-extrabold tracking-[-0.025em] text-white leading-tight whitespace-nowrap"
+              >
+                EGP 998.00
+              </p>
+              <p
+                id="holderSubtitle"
+                class="text-[11px] text-white/75 mt-1 leading-snug"
+              >
+                Canteen Dining Pass · Ready to Tap
+              </p>
+
+              <!-- Crisp White Top Up Pill Button -->
+              <div class="mt-3 flex items-center gap-2">
+                <button
+                  id="openTopUpBtn"
+                  type="button"
+                  class="bg-white hover:bg-gray-100 active:scale-95 text-ink text-xs font-bold px-3.5 py-2 rounded-full shadow-md inline-flex items-center gap-1.5 shrink-0 whitespace-nowrap transition"
+                >
+                  <span class="w-4 h-4 rounded-full bg-ink text-white flex items-center justify-center text-[11px] leading-none">+</span>
+                  <span>Top Up</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Detailed Vector Drawing of Angled Black Silicone NFC Wristband -->
+            <div class="w-[144px] sm:w-[156px] h-[136px] shrink-0 flex items-center justify-center" aria-label="Black silicone NFC canteen bracelet illustration">
+              <svg
+                viewBox="0 0 220 205"
+                class="w-full h-full overflow-visible drop-shadow-[0_12px_16px_rgba(0,0,0,0.65)]"
+                role="img"
+                aria-label="Angled black silicone NFC wristband with raised top tag, holes, metallic pin, and strap loop"
+              >
+                <defs>
+                  <!-- Matte-satin black silicone gradient along the angled loop -->
+                  <linearGradient id="siliconeOuterGrad" x1="15%" y1="8%" x2="88%" y2="92%">
+                    <stop offset="0%" stop-color="#3C3F46" />
+                    <stop offset="32%" stop-color="#23252A" />
+                    <stop offset="72%" stop-color="#15161A" />
+                    <stop offset="100%" stop-color="#0B0C0E" />
+                  </linearGradient>
+
+                  <!-- Inner band wall highlight/shadow -->
+                  <linearGradient id="siliconeInnerGrad" x1="25%" y1="15%" x2="80%" y2="85%">
+                    <stop offset="0%" stop-color="#111216" />
+                    <stop offset="55%" stop-color="#1E2026" />
+                    <stop offset="100%" stop-color="#2D3038" />
+                  </linearGradient>
+
+                  <!-- Raised top NFC pod highlight -->
+                  <linearGradient id="nfcPodGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#4A4E57" />
+                    <stop offset="45%" stop-color="#2A2D34" />
+                    <stop offset="100%" stop-color="#181A1F" />
+                  </linearGradient>
+
+                  <!-- Metallic snap pin button radial gradient -->
+                  <radialGradient id="metalPinGrad" cx="35%" cy="30%" r="70%">
+                    <stop offset="0%" stop-color="#F1F5F9" />
+                    <stop offset="45%" stop-color="#CBD5E1" />
+                    <stop offset="85%" stop-color="#64748B" />
+                    <stop offset="100%" stop-color="#334155" />
+                  </radialGradient>
+
+                  <!-- Subtle ground reflection beneath bracelet -->
+                  <radialGradient id="braceletShadowGrad" cx="50%" cy="50%" r="50%">
+                    <stop offset="0%" stop-color="#000000" stop-opacity="0.55" />
+                    <stop offset="100%" stop-color="#000000" stop-opacity="0" />
+                  </radialGradient>
+                </defs>
+
+                <!-- Ground contact shadow -->
+                <ellipse cx="114" cy="192" rx="66" ry="9" fill="url(#braceletShadowGrad)" />
+
+                <!-- Back/inner wall of the angled oval wristband -->
+                <path
+                  d="M 142 18 C 186 24, 204 74, 184 128 C 166 174, 118 192, 76 180 C 98 176, 126 164, 148 134 C 174 96, 174 44, 142 18 Z"
+                  fill="url(#siliconeInnerGrad)"
+                  stroke="#090A0C"
+                  stroke-width="2"
+                />
+
+                <!-- Main sculpted black silicone wristband loop -->
+                <path
+                  d="M 146 12
+                     C 94 2, 34 42, 19 102
+                     C 7 148, 32 184, 78 186
+                     C 122 188, 166 162, 185 116
+                     C 202 74, 186 24, 146 12 Z
+                     M 144 38
+                     C 168 50, 176 86, 162 118
+                     C 146 152, 112 169, 80 166
+                     C 48 163, 33 135, 42 100
+                     C 53 56, 102 24, 144 38 Z"
+                  fill="url(#siliconeOuterGrad)"
+                  fill-rule="evenodd"
+                  stroke="#4B505A"
+                  stroke-width="1.2"
+                  stroke-linejoin="round"
+                />
+
+                <!-- Rim highlight along the outer left & top silicone edge -->
+                <path
+                  d="M 142 15 C 94 7, 38 45, 23 102 C 14 136, 26 165, 52 178"
+                  fill="none"
+                  stroke="#646A75"
+                  stroke-width="1.8"
+                  stroke-linecap="round"
+                  opacity="0.65"
+                />
+
+                <!-- Smooth raised top NFC pod/plate along the upper-left curve -->
+                <path
+                  d="M 52 54
+                     C 74 30, 108 16, 134 21
+                     C 142 23, 145 31, 139 38
+                     C 115 41, 84 56, 65 78
+                     C 57 85, 47 79, 48 69
+                     C 49 63, 50 58, 52 54 Z"
+                  fill="url(#nfcPodGrad)"
+                  stroke="#5C626E"
+                  stroke-width="1.2"
+                />
+                <!-- Subtle specular sheen across the raised NFC pod -->
+                <path
+                  d="M 62 52 C 82 33, 109 23, 130 25"
+                  fill="none"
+                  stroke="#94A3B8"
+                  stroke-width="1.4"
+                  stroke-linecap="round"
+                  opacity="0.45"
+                />
+
+                <!-- Lower strap adjustment holes along the right/bottom strap -->
+                <g fill="#08090B" stroke="#474C56" stroke-width="1">
+                  <!-- Upper strap hole -->
+                  <ellipse cx="163" cy="86" rx="5.2" ry="3.6" transform="rotate(-24 163 86)" />
+                  <!-- Second hole -->
+                  <ellipse cx="155" cy="108" rx="5.4" ry="3.7" transform="rotate(-28 155 108)" />
+                  <!-- Third hole -->
+                  <ellipse cx="144" cy="129" rx="5.5" ry="3.8" transform="rotate(-32 144 129)" />
+                  <!-- Fourth hole -->
+                  <ellipse cx="129" cy="148" rx="5.5" ry="3.8" transform="rotate(-36 129 148)" />
+                  <!-- Fifth hole -->
+                  <ellipse cx="111" cy="162" rx="5.4" ry="3.7" transform="rotate(-40 111 162)" />
+                  <!-- Sixth hole -->
+                  <ellipse cx="91" cy="171" rx="5.2" ry="3.5" transform="rotate(-44 91 171)" />
+                </g>
+
+                <!-- Metallic snap/pin button seated in the strap -->
+                <g transform="translate(136, 139)">
+                  <circle cx="0" cy="1.5" r="7.2" fill="#07080A" opacity="0.65" />
+                  <circle cx="0" cy="0" r="6.8" fill="url(#metalPinGrad)" stroke="#E2E8F0" stroke-width="0.9" />
+                  <circle cx="-1.8" cy="-1.8" r="1.8" fill="#FFFFFF" opacity="0.7" />
+                </g>
+
+                <!-- Silicone keeper / strap loop around the band -->
+                <path
+                  d="M 164 63
+                     C 177 65, 190 73, 194 84
+                     C 197 92, 191 101, 180 105
+                     L 170 98
+                     C 178 95, 181 90, 179 85
+                     C 176 79, 168 74, 159 72 Z"
+                  fill="#262930"
+                  stroke="#525864"
+                  stroke-width="1.2"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <!-- Transaction History Section -->
+        <div class="flex-1 flex flex-col">
+          <div class="flex items-center justify-between mb-3">
+            <h2 class="text-[15px] font-bold text-ink tracking-[-0.01em]">
+              Transaction History
+            </h2>
+            <span id="txCountBadge" class="text-xs font-medium text-muted">
+              5 items
+            </span>
+          </div>
+
+          <div id="transactionList" class="divide-y divide-line/80">
+            <!-- Populated dynamically via JavaScript -->
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================================================================== -->
+      <!-- SCREEN 2: TOP UP AMOUNT (Large EGP Readout + Preset Grid + Keypad)    -->
+      <!-- ===================================================================== -->
+      <section id="topUpScreen" class="hidden screen-enter flex-1 flex flex-col justify-between">
+        <div class="px-5 pt-2 pb-3 space-y-4">
+          <!-- Active Child / Bracelet Recipient Indicator -->
+          <div class="flex items-center justify-between gap-2 px-3.5 py-2 rounded-xl bg-softGray/80 border border-line/70">
+            <div class="flex items-center gap-2 min-w-0">
+              <span class="w-2 h-2 rounded-full bg-successGreen shrink-0"></span>
+              <span class="text-xs font-semibold text-muted shrink-0">Topping up for:</span>
+              <span id="topUpRecipientLabel" class="text-xs font-bold text-ink truncate">Layla (Daughter) · #CB-4092</span>
+            </div>
+            <button
+              id="topUpSwitchChildBtn"
+              type="button"
+              class="text-[11px] font-bold text-accentBlue hover:underline shrink-0"
+            >
+              Switch
+            </button>
+          </div>
+
+          <!-- Centered Enter Amount Box -->
+          <div class="bg-canvas border border-line/80 rounded-2xl py-5 px-4 text-center">
+            <p class="text-xs font-medium text-muted mb-1.5">
+              Enter amount (EGP)
+            </p>
+            <div class="flex items-center justify-center gap-1.5 min-h-[44px]">
+              <span class="text-base font-bold text-muted">EGP</span>
+              <span id="topUpAmountDisplay" class="text-[36px] font-extrabold tracking-[-0.03em] text-ink leading-none">
+                1,900
+              </span>
+              <span class="w-[2px] h-8 bg-ink animate-pulse rounded-full ml-0.5" aria-hidden="true"></span>
+            </div>
+            <p id="topUpPreviewHint" class="text-[11px] text-muted mt-2">
+              Min EGP 10 · Max EGP 50,000 per top-up
+            </p>
+          </div>
+
+          <!-- 2x4 Preset Amount Chips Grid -->
+          <div id="presetGrid" class="grid grid-cols-4 gap-2">
+            <!-- Populated dynamically via JavaScript -->
+          </div>
+
+          <!-- Primary Black Continue Button -->
+          <button
+            id="topUpContinueBtn"
+            type="button"
+            class="w-full py-3.5 px-5 rounded-full bg-ink hover:bg-neutral-800 disabled:bg-gray-300 text-white text-sm font-bold shadow-pill transition active:scale-[0.99]"
+          >
+            Continue
+          </button>
+        </div>
+
+        <!-- Bottom Numeric Keypad -->
+        <div id="topUpKeypad" class="bg-[#E5E7EB] p-2 pt-2.5 pb-4 grid grid-cols-3 gap-1.5 select-none shrink-0">
+          <!-- Populated dynamically via JavaScript -->
+        </div>
+      </section>
+
+      <!-- ===================================================================== -->
+      <!-- SCREEN 3: CHOOSE PAYMENT (Radio List + Primary Black Continue CTA)    -->
+      <!-- ===================================================================== -->
+      <section id="paymentScreen" class="hidden screen-enter flex-1 px-5 pt-2 pb-6 flex flex-col justify-between gap-6">
+        <div class="space-y-3">
+          <div class="px-3.5 py-2 rounded-xl bg-softGray/80 border border-line/70 flex items-center justify-between gap-2">
+            <span class="text-xs font-medium text-muted">Recipient Bracelet</span>
+            <span id="paymentRecipientLabel" class="text-xs font-bold text-ink truncate">Layla (Daughter) · #CB-4092</span>
+          </div>
+
+          <p class="text-xs font-medium text-muted mb-2">
+            Select how you want to load <span id="paymentScreenAmount" class="font-bold text-ink">EGP 1,900.00</span>
+          </p>
+
+          <div id="paymentOptionsContainer" class="space-y-2.5">
+            <!-- Populated dynamically via JavaScript -->
+          </div>
+
+          <!-- Prominent + Add Bank Card or Wallet Action Button -->
+          <button
+            id="openAddPaymentBtn"
+            type="button"
+            class="w-full p-3.5 rounded-2xl border border-dashed border-gray-300 hover:border-ink bg-canvas/70 hover:bg-softGray/70 flex items-center justify-between gap-3 text-left transition active:scale-[0.99]"
+          >
+            <div class="flex items-center gap-3 min-w-0">
+              <span class="w-9 h-9 rounded-xl bg-ink text-white flex items-center justify-center shrink-0">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 5v14m-7-7h14" />
+                </svg>
+              </span>
+              <div class="min-w-0">
+                <p class="text-sm font-bold text-ink truncate">Add Bank Card or Wallet</p>
+                <p class="text-xs text-muted truncate">Link a debit/credit card or mobile wallet</p>
+              </div>
+            </div>
+            <svg class="w-4 h-4 text-muted shrink-0" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
+        </div>
+
+        <button
+          id="paymentContinueBtn"
+          type="button"
+          class="w-full py-3.5 px-5 rounded-full bg-ink hover:bg-neutral-800 text-white text-sm font-bold shadow-pill transition active:scale-[0.99]"
+        >
+          Continue
+        </button>
+      </section>
+
+      <!-- ===================================================================== -->
+      <!-- SCREEN 4: ENTER YOUR PIN (4 Individual PIN Boxes + Continue + Keypad)  -->
+      <!-- ===================================================================== -->
+      <section id="pinScreen" class="hidden screen-enter flex-1 flex flex-col justify-between">
+        <div class="px-5 pt-6 pb-4 flex flex-col items-center text-center space-y-6">
+          <div class="space-y-1.5">
+            <span id="pinRecipientPill" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-softGray text-[11px] font-bold text-ink">
+              For Layla (Daughter) · #CB-4092
+            </span>
+            <h2 class="text-[20px] font-bold tracking-[-0.02em] text-ink pt-1">
+              Enter Your PIN
+            </h2>
+            <p class="text-xs text-muted max-w-[260px] leading-relaxed">
+              Enter your 4-digit wallet PIN to confirm bracelet top-up
+            </p>
+          </div>
+
+          <!-- 4 Individual PIN Boxes -->
+          <div id="pinBoxesRow" class="flex items-center justify-center gap-3.5" role="group" aria-label="4-digit PIN">
+            <div data-pin-slot="0" class="w-12 h-13 py-3 rounded-xl border-2 border-line bg-white text-xl font-extrabold text-ink flex items-center justify-center transition"></div>
+            <div data-pin-slot="1" class="w-12 h-13 py-3 rounded-xl border-2 border-line bg-white text-xl font-extrabold text-ink flex items-center justify-center transition"></div>
+            <div data-pin-slot="2" class="w-12 h-13 py-3 rounded-xl border-2 border-line bg-white text-xl font-extrabold text-ink flex items-center justify-center transition"></div>
+            <div data-pin-slot="3" class="w-12 h-13 py-3 rounded-xl border-2 border-line bg-white text-xl font-extrabold text-ink flex items-center justify-center transition"></div>
+          </div>
+
+          <p id="pinHelperText" class="text-[11px] text-muted">
+            Demo hint: any 4 digits authorize your top-up
+          </p>
+
+          <!-- Primary Black Continue Button -->
+          <button
+            id="pinContinueBtn"
+            type="button"
+            disabled
+            class="w-full py-3.5 px-5 rounded-full bg-ink hover:bg-neutral-800 disabled:bg-gray-300 disabled:text-gray-500 text-white text-sm font-bold shadow-pill transition active:scale-[0.99]"
+          >
+            Continue
+          </button>
+        </div>
+
+        <!-- Bottom Numeric Keypad for PIN Entry -->
+        <div id="pinKeypad" class="bg-[#E5E7EB] p-2 pt-2.5 pb-4 grid grid-cols-3 gap-1.5 select-none shrink-0">
+          <!-- Populated dynamically via JavaScript -->
+        </div>
+      </section>
+
+      <!-- ===================================================================== -->
+      <!-- SCREEN 5: SUCCESS CONFIRMATION (Credits Bracelet & Logs Transaction)  -->
+      <!-- ===================================================================== -->
+      <section id="successScreen" class="hidden screen-enter flex-1 px-6 py-6 flex flex-col justify-between text-center">
+        <div class="my-auto flex flex-col items-center space-y-4">
+          <div class="w-20 h-20 rounded-full bg-successSoft flex items-center justify-center text-successGreen">
+            <svg class="w-10 h-10" fill="none" stroke="currentColor" stroke-width="2.8" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+            </svg>
+          </div>
+
+          <div class="space-y-1">
+            <p id="successAmountText" class="text-[30px] font-extrabold tracking-[-0.03em] text-successGreen">
+              EGP 1,900.00
+            </p>
+            <h2 class="text-base font-bold text-ink">
+              Bracelet Top-Up Successful
+            </h2>
+            <p id="successMetaText" class="text-xs text-muted">
+              Credited to Layla (Daughter) · #CB-4092
+            </p>
+          </div>
+
+          <!-- Receipt Summary -->
+          <div class="w-full bg-canvas border border-line rounded-2xl p-4 text-left space-y-2.5 text-xs mt-2">
+            <div class="flex justify-between text-muted">
+              <span>Bracelet Holder</span>
+              <span id="receiptHolderName" class="font-semibold text-ink">Layla (Daughter) · #CB-4092</span>
+            </div>
+            <div class="flex justify-between text-muted">
+              <span>Payment Method</span>
+              <span id="receiptPaymentName" class="font-semibold text-ink">Mastercard</span>
+            </div>
+            <div class="flex justify-between text-muted">
+              <span>Transaction Ref</span>
+              <span id="receiptRefCode" class="font-semibold text-ink">BR-9042</span>
+            </div>
+            <div class="pt-2.5 border-t border-line flex justify-between text-sm font-extrabold text-ink">
+              <span>New Bracelet Balance</span>
+              <span id="receiptUpdatedBalance" class="text-successGreen">EGP 2,898.00</span>
+            </div>
+          </div>
+        </div>
+
+        <button
+          id="backToWalletBtn"
+          type="button"
+          class="w-full py-3.5 px-5 rounded-full bg-ink hover:bg-neutral-800 text-white text-sm font-bold shadow-pill transition active:scale-[0.99]"
+        >
+          Back to Wallet
+        </button>
+      </section>
+    </div>
+
+    <!-- Add Bank Card or Wallet Modal Sheet -->
+    <div
+      id="addPaymentModal"
+      class="hidden fixed inset-0 z-40 bg-black/45 backdrop-blur-[2px] flex items-end sm:items-center justify-center p-0 sm:p-4"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="addPaymentModalTitle"
+    >
+      <div class="w-full max-w-[430px] bg-white rounded-t-[28px] sm:rounded-[28px] p-5 shadow-2xl screen-enter max-h-[88vh] overflow-y-auto no-scrollbar">
+        <div class="flex items-center justify-between gap-3 mb-4">
+          <div class="min-w-0">
+            <p class="text-[11px] font-bold uppercase tracking-wider text-accentBlue">
+              PAYMENT METHODS
+            </p>
+            <h3 id="addPaymentModalTitle" class="text-lg font-extrabold text-ink truncate">
+              Add Bank Card or Wallet
+            </h3>
+          </div>
+          <button
+            id="closeAddPaymentModalBtn"
+            type="button"
+            aria-label="Close modal"
+            class="w-8 h-8 rounded-full bg-softGray hover:bg-gray-200 flex items-center justify-center text-ink transition shrink-0"
+          >
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.4" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+
+        <!-- Mode Switcher Tabs: Bank Card vs Mobile Wallet -->
+        <div class="grid grid-cols-2 gap-1.5 p-1 rounded-xl bg-softGray mb-4">
+          <button
+            id="tabBankCardBtn"
+            type="button"
+            class="py-2 px-3 rounded-lg text-xs font-bold bg-white text-ink shadow-sm transition"
+          >
+            Bank Card
+          </button>
+          <button
+            id="tabMobileWalletBtn"
+            type="button"
+            class="py-2 px-3 rounded-lg text-xs font-bold text-muted hover:text-ink transition"
+          >
+            Mobile Wallet
+          </button>
+        </div>
+
+        <!-- Tab 1: Bank Card Form -->
+        <form id="bankCardForm" class="space-y-3" novalidate>
+          <div>
+            <label for="cardHolderInput" class="block text-xs font-semibold text-ink mb-1">
+              Cardholder Name
+            </label>
+            <input
+              id="cardHolderInput"
+              type="text"
+              placeholder="e.g. Omar Hassan"
+              class="w-full px-3.5 py-2.5 rounded-xl border border-line focus:border-ink focus:outline-none text-sm text-ink bg-white"
+            />
+          </div>
+
+          <div>
+            <div class="flex items-center justify-between mb-1">
+              <label for="cardNumberInput" class="block text-xs font-semibold text-ink">
+                Card Number
+              </label>
+              <span id="detectedCardBrand" class="text-[11px] font-bold text-accentBlue">
+                Card
+              </span>
+            </div>
+            <input
+              id="cardNumberInput"
+              type="text"
+              inputmode="numeric"
+              maxlength="19"
+              placeholder="1234 5678 9012 3456"
+              class="w-full px-3.5 py-2.5 rounded-xl border border-line focus:border-ink focus:outline-none text-sm font-mono tracking-wider text-ink bg-white"
+            />
+          </div>
+
+          <div class="grid grid-cols-2 gap-2.5">
+            <div>
+              <label for="cardExpiryInput" class="block text-xs font-semibold text-ink mb-1">
+                Expiry (MM/YY)
+              </label>
+              <input
+                id="cardExpiryInput"
+                type="text"
+                inputmode="numeric"
+                maxlength="5"
+                placeholder="08/28"
+                class="w-full px-3.5 py-2.5 rounded-xl border border-line focus:border-ink focus:outline-none text-sm font-mono text-ink bg-white"
+              />
+            </div>
+            <div>
+              <label for="cardCvvInput" class="block text-xs font-semibold text-ink mb-1">
+                CVV
+              </label>
+              <input
+                id="cardCvvInput"
+                type="password"
+                inputmode="numeric"
+                maxlength="4"
+                placeholder="123"
+                class="w-full px-3.5 py-2.5 rounded-xl border border-line focus:border-ink focus:outline-none text-sm font-mono text-ink bg-white"
+              />
+            </div>
+          </div>
+
+          <div>
+            <label for="cardNicknameInput" class="block text-xs font-semibold text-ink mb-1">
+              Bank / Nickname <span class="text-muted font-normal">(optional)</span>
+            </label>
+            <input
+              id="cardNicknameInput"
+              type="text"
+              placeholder="e.g. CIB Debit"
+              class="w-full px-3.5 py-2.5 rounded-xl border border-line focus:border-ink focus:outline-none text-sm text-ink bg-white"
+            />
+          </div>
+
+          <p id="bankFormError" class="hidden text-xs font-medium text-rose-600"></p>
+
+          <button
+            type="submit"
+            class="w-full mt-1 py-3.5 px-5 rounded-full bg-ink hover:bg-neutral-800 text-white text-sm font-bold shadow-pill transition active:scale-[0.99]"
+          >
+            Save & Select Card
+          </button>
+        </form>
+
+        <!-- Tab 2: Mobile Wallet Form -->
+        <form id="mobileWalletForm" class="hidden space-y-3" novalidate>
+          <div>
+            <label for="walletProviderSelect" class="block text-xs font-semibold text-ink mb-1">
+              Wallet Provider
+            </label>
+            <select
+              id="walletProviderSelect"
+              class="w-full px-3.5 py-2.5 rounded-xl border border-line focus:border-ink focus:outline-none text-sm font-medium text-ink bg-white"
+            >
+              <option value="Vodafone Cash">Vodafone Cash</option>
+              <option value="InstaPay Wallet">InstaPay Wallet</option>
+              <option value="Orange Cash">Orange Cash</option>
+              <option value="Etisalat Cash (e&)">Etisalat Cash (e&)</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="walletPhoneInput" class="block text-xs font-semibold text-ink mb-1">
+              Mobile Wallet Number
+            </label>
+            <input
+              id="walletPhoneInput"
+              type="tel"
+              inputmode="numeric"
+              maxlength="14"
+              placeholder="010 1234 5678"
+              class="w-full px-3.5 py-2.5 rounded-xl border border-line focus:border-ink focus:outline-none text-sm font-mono tracking-wide text-ink bg-white"
+            />
+          </div>
+
+          <div>
+            <label for="walletAliasInput" class="block text-xs font-semibold text-ink mb-1">
+              Wallet Label <span class="text-muted font-normal">(optional)</span>
+            </label>
+            <input
+              id="walletAliasInput"
+              type="text"
+              placeholder="e.g. Primary EGP Wallet"
+              class="w-full px-3.5 py-2.5 rounded-xl border border-line focus:border-ink focus:outline-none text-sm text-ink bg-white"
+            />
+          </div>
+
+          <p id="walletFormError" class="hidden text-xs font-medium text-rose-600"></p>
+
+          <button
+            type="submit"
+            class="w-full mt-1 py-3.5 px-5 rounded-full bg-ink hover:bg-neutral-800 text-white text-sm font-bold shadow-pill transition active:scale-[0.99]"
+          >
+            Save & Select Wallet
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Add Account & Configure Bracelet Modal Sheet -->
+    <div
+      id="accountConfigModal"
+      class="hidden fixed inset-0 z-40 bg-black/45 backdrop-blur-[2px] flex items-end sm:items-center justify-center p-0 sm:p-4"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="accountConfigModalTitle"
+    >
+      <div class="w-full max-w-[430px] bg-white rounded-t-[28px] sm:rounded-[28px] p-5 shadow-2xl screen-enter max-h-[88vh] overflow-y-auto no-scrollbar">
+        <div class="flex items-center justify-between gap-3 mb-4">
+          <div class="min-w-0">
+            <p id="accountModalEyebrow" class="text-[11px] font-bold uppercase tracking-wider text-accentBlue">
+              FAMILY BRACELETS
+            </p>
+            <h3 id="accountConfigModalTitle" class="text-lg font-extrabold text-ink truncate">
+              Add Bracelet Account
+            </h3>
+          </div>
+          <button
+            id="closeAccountModalBtn"
+            type="button"
+            aria-label="Close bracelet configuration"
+            class="w-8 h-8 rounded-full bg-softGray hover:bg-gray-200 flex items-center justify-center text-ink transition shrink-0"
+          >
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.4" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+
+        <form id="accountConfigForm" class="space-y-3.5" novalidate>
+          <div>
+            <label for="childNameInput" class="block text-xs font-semibold text-ink mb-1">
+              Child's Name
+            </label>
+            <input
+              id="childNameInput"
+              type="text"
+              placeholder="e.g. Layla or Omar"
+              class="w-full px-3.5 py-2.5 rounded-xl border border-line focus:border-ink focus:outline-none text-sm text-ink bg-white"
+            />
+          </div>
+
+          <div>
+            <span class="block text-xs font-semibold text-ink mb-1.5">
+              Relationship Label
+            </span>
+            <div class="grid grid-cols-3 gap-2 mb-2">
+              <button
+                type="button"
+                data-relation-choice="Daughter"
+                class="relation-chip py-2 px-3 rounded-xl border border-ink bg-ink text-white text-xs font-bold transition"
+              >
+                Daughter
+              </button>
+              <button
+                type="button"
+                data-relation-choice="Son"
+                class="relation-chip py-2 px-3 rounded-xl border border-line bg-white text-ink hover:bg-canvas text-xs font-bold transition"
+              >
+                Son
+              </button>
+              <button
+                type="button"
+                data-relation-choice="Custom"
+                class="relation-chip py-2 px-3 rounded-xl border border-line bg-white text-ink hover:bg-canvas text-xs font-bold transition"
+              >
+                Custom
+              </button>
+            </div>
+            <input
+              id="customRelationInput"
+              type="text"
+              placeholder="Enter custom label (e.g. Nephew)"
+              class="hidden w-full px-3.5 py-2 rounded-xl border border-line focus:border-ink focus:outline-none text-xs text-ink bg-white"
+            />
+          </div>
+
+          <div class="grid grid-cols-2 gap-2.5">
+            <div>
+              <label for="braceletCodeInput" class="block text-xs font-semibold text-ink mb-1">
+                Bracelet ID
+              </label>
+              <input
+                id="braceletCodeInput"
+                type="text"
+                maxlength="12"
+                placeholder="#CB-4094"
+                class="w-full px-3.5 py-2.5 rounded-xl border border-line focus:border-ink focus:outline-none text-sm font-mono uppercase text-ink bg-white"
+              />
+            </div>
+            <div id="initialBalanceFieldWrap">
+              <label for="initialBalanceInput" class="block text-xs font-semibold text-ink mb-1">
+                Starting EGP
+              </label>
+              <input
+                id="initialBalanceInput"
+                type="number"
+                min="0"
+                max="50000"
+                step="1"
+                placeholder="0"
+                class="w-full px-3.5 py-2.5 rounded-xl border border-line focus:border-ink focus:outline-none text-sm font-mono text-ink bg-white"
+              />
+            </div>
+          </div>
+
+          <p id="accountFormError" class="hidden text-xs font-medium text-rose-600"></p>
+
+          <div class="flex items-center gap-2 pt-1">
+            <button
+              id="deleteAccountBtn"
+              type="button"
+              class="hidden py-3.5 px-4 rounded-full border border-rose-200 bg-rose-50 hover:bg-rose-100 text-rose-600 text-xs font-bold transition shrink-0"
+            >
+              Remove
+            </button>
+            <button
+              id="saveAccountSubmitBtn"
+              type="submit"
+              class="flex-1 py-3.5 px-5 rounded-full bg-ink hover:bg-neutral-800 text-white text-sm font-bold shadow-pill transition active:scale-[0.99]"
+            >
+              Save Bracelet
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Non-blocking Toast Notification -->
+    <div
+      id="toastBanner"
+      class="hidden fixed top-4 left-1/2 -translate-x-1/2 z-50 bg-ink text-white text-xs font-semibold px-4 py-2 rounded-full shadow-lg pointer-events-none"
+    >
+      <span id="toastMessage"></span>
+    </div>
+  </div>
+
+  <script>
+    /**
+     * Canteen Bracelet EGP Wallet & Top-Up Application
+     * State machine supporting:
+     *  - 'wallet': Dark gradient balance card + Top Up pill + EGP transaction history
+     *  - 'topup': Large EGP amount display, 8 preset amount chips, Continue CTA, numeric keypad
+     *  - 'payment': Payment options with radio indicator + Continue CTA
+     *  - 'pin': 4 individual PIN boxes, Continue CTA, numeric keypad
+     *  - 'success': Confirmation view that credits bracelet balance & prepends transaction log entry
+     */
+
+    const MIN_TOPUP_EGP = 10;
+    const MAX_TOPUP_EGP = 50000;
+
+    const PRESET_AMOUNTS = [100, 200, 300, 400, 500, 600, 750, 900];
+
+    const PAYMENT_METHODS = [
+      {
+        id: 'mastercard',
+        name: 'Mastercard',
+        detail: '4421 •••• •••• 7834',
+        brand: 'mastercard',
+      },
+      {
+        id: 'dana',
+        name: 'Mobile Wallet',
+        detail: '010 •••• 8821 · Instant EGP',
+        brand: 'wallet',
+      },
+    ];
+
+    const state = {
+      screen: 'wallet', // 'wallet' | 'topup' | 'payment' | 'pin' | 'success'
+      activeAccountId: 'acc-daughter',
+      accounts: [
+        {
+          id: 'acc-daughter',
+          childName: 'Layla',
+          relation: 'Daughter',
+          braceletId: '#CB-4092',
+          holderName: 'Canteen Dining Pass',
+          balance: 0.0,
+          transactions: [],
+        },
+        {
+          id: 'acc-son',
+          childName: 'Omar',
+          relation: 'Son',
+          braceletId: '#CB-4093',
+          holderName: 'Canteen Dining Pass',
+          balance: 0.0,
+          transactions: [],
+        },
+      ],
+      topUpInput: '1900',
+      selectedPaymentId: 'mastercard',
+      pinDigits: [],
+      lastReceipt: null,
+    };
+
+    function getActiveAccount() {
+      return state.accounts.find((acc) => acc.id === state.activeAccountId) || state.accounts[0];
+    }
+
+    function formatRecipientLabel(account) {
+      return account.relation
+        ? `${account.childName} (${account.relation})`
+        : account.childName;
+    }
+
+    const el = {
+      topBar: document.getElementById('topBar'),
+      backBtn: document.getElementById('backBtn'),
+      backIcon: document.getElementById('backIcon'),
+      topBarTitle: document.getElementById('topBarTitle'),
+      moreActionBtn: document.getElementById('moreActionBtn'),
+      walletScreen: document.getElementById('walletScreen'),
+      topUpScreen: document.getElementById('topUpScreen'),
+      paymentScreen: document.getElementById('paymentScreen'),
+      pinScreen: document.getElementById('pinScreen'),
+      successScreen: document.getElementById('successScreen'),
+      accountSwitcherBar: document.getElementById('accountSwitcherBar'),
+      braceletOwnerLabel: document.getElementById('braceletOwnerLabel'),
+      braceletTagLabel: document.getElementById('braceletTagLabel'),
+      walletBalanceDisplay: document.getElementById('walletBalanceDisplay'),
+      holderSubtitle: document.getElementById('holderSubtitle'),
+      openTopUpBtn: document.getElementById('openTopUpBtn'),
+      txCountBadge: document.getElementById('txCountBadge'),
+      transactionList: document.getElementById('transactionList'),
+      topUpRecipientLabel: document.getElementById('topUpRecipientLabel'),
+      topUpSwitchChildBtn: document.getElementById('topUpSwitchChildBtn'),
+      topUpAmountDisplay: document.getElementById('topUpAmountDisplay'),
+      presetGrid: document.getElementById('presetGrid'),
+      topUpContinueBtn: document.getElementById('topUpContinueBtn'),
+      topUpKeypad: document.getElementById('topUpKeypad'),
+      paymentRecipientLabel: document.getElementById('paymentRecipientLabel'),
+      paymentScreenAmount: document.getElementById('paymentScreenAmount'),
+      paymentOptionsContainer: document.getElementById('paymentOptionsContainer'),
+      openAddPaymentBtn: document.getElementById('openAddPaymentBtn'),
+      paymentContinueBtn: document.getElementById('paymentContinueBtn'),
+      addPaymentModal: document.getElementById('addPaymentModal'),
+      closeAddPaymentModalBtn: document.getElementById('closeAddPaymentModalBtn'),
+      tabBankCardBtn: document.getElementById('tabBankCardBtn'),
+      tabMobileWalletBtn: document.getElementById('tabMobileWalletBtn'),
+      bankCardForm: document.getElementById('bankCardForm'),
+      cardHolderInput: document.getElementById('cardHolderInput'),
+      cardNumberInput: document.getElementById('cardNumberInput'),
+      detectedCardBrand: document.getElementById('detectedCardBrand'),
+      cardExpiryInput: document.getElementById('cardExpiryInput'),
+      cardCvvInput: document.getElementById('cardCvvInput'),
+      cardNicknameInput: document.getElementById('cardNicknameInput'),
+      bankFormError: document.getElementById('bankFormError'),
+      mobileWalletForm: document.getElementById('mobileWalletForm'),
+      walletProviderSelect: document.getElementById('walletProviderSelect'),
+      walletPhoneInput: document.getElementById('walletPhoneInput'),
+      walletAliasInput: document.getElementById('walletAliasInput'),
+      walletFormError: document.getElementById('walletFormError'),
+      accountConfigModal: document.getElementById('accountConfigModal'),
+      accountModalEyebrow: document.getElementById('accountModalEyebrow'),
+      accountConfigModalTitle: document.getElementById('accountConfigModalTitle'),
+      closeAccountModalBtn: document.getElementById('closeAccountModalBtn'),
+      accountConfigForm: document.getElementById('accountConfigForm'),
+      childNameInput: document.getElementById('childNameInput'),
+      customRelationInput: document.getElementById('customRelationInput'),
+      braceletCodeInput: document.getElementById('braceletCodeInput'),
+      initialBalanceFieldWrap: document.getElementById('initialBalanceFieldWrap'),
+      initialBalanceInput: document.getElementById('initialBalanceInput'),
+      accountFormError: document.getElementById('accountFormError'),
+      deleteAccountBtn: document.getElementById('deleteAccountBtn'),
+      saveAccountSubmitBtn: document.getElementById('saveAccountSubmitBtn'),
+      pinRecipientPill: document.getElementById('pinRecipientPill'),
+      pinBoxesRow: document.getElementById('pinBoxesRow'),
+      pinContinueBtn: document.getElementById('pinContinueBtn'),
+      pinKeypad: document.getElementById('pinKeypad'),
+      successAmountText: document.getElementById('successAmountText'),
+      successMetaText: document.getElementById('successMetaText'),
+      receiptHolderName: document.getElementById('receiptHolderName'),
+      receiptPaymentName: document.getElementById('receiptPaymentName'),
+      receiptRefCode: document.getElementById('receiptRefCode'),
+      receiptUpdatedBalance: document.getElementById('receiptUpdatedBalance'),
+      backToWalletBtn: document.getElementById('backToWalletBtn'),
+      toastBanner: document.getElementById('toastBanner'),
+      toastMessage: document.getElementById('toastMessage'),
+    };
+
+    function formatEGP(value, includeDecimals = true) {
+      const absVal = Math.abs(Number(value) || 0);
+      const formatted = absVal.toLocaleString('en-US', {
+        minimumFractionDigits: includeDecimals ? 2 : 0,
+        maximumFractionDigits: includeDecimals ? 2 : 0,
+      });
+      return `EGP ${formatted}`;
+    }
+
+    function getParsedTopUpAmount() {
+      const normalized = String(state.topUpInput ?? '').replace(/,/g, '').trim();
+      if (!normalized || normalized === '.') return 0;
+      const parsed = Number(normalized);
+      return Number.isFinite(parsed) && parsed > 0 ? Number(parsed.toFixed(2)) : 0;
+    }
+
+    function formatTopUpReadout(rawInput) {
+      const cleaned = String(rawInput ?? '').replace(/,/g, '');
+      if (cleaned === '') return '0';
+      if (cleaned.endsWith('.')) {
+        const wholePart = cleaned.slice(0, -1);
+        const wholeNum = wholePart === '' ? 0 : Number(wholePart);
+        return Number.isFinite(wholeNum) ? `${wholeNum.toLocaleString('en-US')}.` : '0.';
+      }
+      const [intPart, decPart] = cleaned.split('.');
+      const intNum = intPart === '' ? 0 : Number(intPart);
+      if (!Number.isFinite(intNum)) return '0';
+      const formattedInt = intNum.toLocaleString('en-US');
+      return decPart !== undefined ? `${formattedInt}.${decPart}` : formattedInt;
+    }
+
+    function getSelectedPayment() {
+      return PAYMENT_METHODS.find((item) => item.id === state.selectedPaymentId) || PAYMENT_METHODS[1];
+    }
+
+    let toastTimeout = null;
+    function showToast(msg) {
+      el.toastMessage.textContent = msg;
+      el.toastBanner.classList.remove('hidden');
+      clearTimeout(toastTimeout);
+      toastTimeout = setTimeout(() => {
+        el.toastBanner.classList.add('hidden');
+      }, 2100);
+    }
+
+    function renderTxIcon(category) {
+      if (category === 'topup') {
+        return `
+          <div class="w-10 h-10 rounded-xl bg-emerald-50 text-successGreen flex items-center justify-center shrink-0">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.4" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 5v14m-7-7h14" />
+            </svg>
+          </div>
+        `;
+      }
+      if (category === 'cafe') {
+        return `
+          <div class="w-10 h-10 rounded-xl bg-amber-50 text-amber-700 flex items-center justify-center shrink-0">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M18 8h1a3 3 0 010 6h-1M3 8h15v6a4 4 0 01-4 4H7a4 4 0 01-4-4V8z" />
+            </svg>
+          </div>
+        `;
+      }
+      if (category === 'drink') {
+        return `
+          <div class="w-10 h-10 rounded-xl bg-sky-50 text-sky-700 flex items-center justify-center shrink-0">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M8 21h8m-4-4v4m-5-9l1-7h8l1 7a5 5 0 01-10 0z" />
+            </svg>
+          </div>
+        `;
+      }
+      return `
+        <div class="w-10 h-10 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center shrink-0">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h10" />
+          </svg>
+        </div>
+      `;
+    }
+
+    function renderPaymentBrandBadge(brand) {
+      if (brand === 'visa') {
+        return `
+          <span class="w-9 h-9 rounded-xl bg-indigo-50 text-[#1A1F71] font-extrabold text-[11px] tracking-tight flex items-center justify-center shrink-0">
+            VISA
+          </span>
+        `;
+      }
+      if (brand === 'paypal') {
+        return `
+          <span class="w-9 h-9 rounded-xl bg-blue-50 text-[#003087] font-extrabold text-sm flex items-center justify-center shrink-0">
+            P
+          </span>
+        `;
+      }
+      if (brand === 'mastercard') {
+        return `
+          <span class="w-9 h-9 rounded-xl bg-orange-50 flex items-center justify-center shrink-0">
+            <span class="flex items-center -space-x-1.5">
+              <span class="w-3.5 h-3.5 rounded-full bg-[#EB001B] inline-block"></span>
+              <span class="w-3.5 h-3.5 rounded-full bg-[#F79E1B]/90 inline-block"></span>
+            </span>
+          </span>
+        `;
+      }
+      if (brand === 'wise') {
+        return `
+          <span class="w-9 h-9 rounded-xl bg-lime-50 text-lime-700 font-extrabold text-sm flex items-center justify-center shrink-0">
+            W
+          </span>
+        `;
+      }
+      return `
+        <span class="w-9 h-9 rounded-xl bg-sky-50 text-accentBlue font-extrabold text-sm flex items-center justify-center shrink-0">
+          E
+        </span>
+      `;
+    }
+
+    function renderWalletScreen() {
+      const activeAcc = getActiveAccount();
+
+      // Render bracelet account pills + "+ Add Account" pill
+      el.accountSwitcherBar.innerHTML =
+        state.accounts
+          .map((acc) => {
+            const isSelected = acc.id === activeAcc.id;
+            return `
+              <button
+                type="button"
+                data-switch-account="${acc.id}"
+                class="px-3.5 py-2 rounded-full text-xs font-bold inline-flex items-center gap-1.5 border transition active:scale-95 whitespace-nowrap ${
+                  isSelected
+                    ? 'bg-ink text-white border-ink shadow-sm'
+                    : 'bg-softGray hover:bg-gray-200/80 text-ink border-line'
+                }"
+              >
+                <span class="w-1.5 h-1.5 rounded-full ${isSelected ? 'bg-emerald-400' : 'bg-muted'}"></span>
+                <span>${acc.childName}</span>
+                ${acc.relation ? `<span class="${isSelected ? 'text-white/75' : 'text-muted'} font-medium">· ${acc.relation}</span>` : ''}
+              </button>
+            `;
+          })
+          .join('') +
+        `
+          <button
+            type="button"
+            id="addAccountPillBtn"
+            class="px-3.5 py-2 rounded-full text-xs font-bold inline-flex items-center gap-1 border border-dashed border-gray-300 hover:border-ink bg-white hover:bg-canvas text-ink transition active:scale-95 whitespace-nowrap"
+          >
+            <span>+ Add Account</span>
+          </button>
+        `;
+
+      el.accountSwitcherBar.querySelectorAll('[data-switch-account]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const targetId = btn.getAttribute('data-switch-account');
+          if (targetId && targetId !== state.activeAccountId) {
+            state.activeAccountId = targetId;
+            renderWalletScreen();
+            const switched = getActiveAccount();
+            showToast(`Switched to ${formatRecipientLabel(switched)} (${switched.braceletId})`);
+          }
+        });
+      });
+
+      const addAccountPillBtn = document.getElementById('addAccountPillBtn');
+      if (addAccountPillBtn) {
+        addAccountPillBtn.addEventListener('click', () => openAccountModal('add'));
+      }
+
+      el.braceletOwnerLabel.textContent = formatRecipientLabel(activeAcc);
+      el.braceletTagLabel.textContent = activeAcc.braceletId;
+      el.walletBalanceDisplay.textContent = formatEGP(activeAcc.balance, true);
+      el.holderSubtitle.textContent = `${activeAcc.holderName} · Ready to Tap`;
+      el.txCountBadge.textContent = `${activeAcc.transactions.length} items`;
+
+      if (activeAcc.transactions.length === 0) {
+        el.transactionList.innerHTML = `
+          <div class="py-10 text-center">
+            <p class="text-[13px] font-semibold text-muted">No transactions yet</p>
+            <p class="text-[11px] text-muted/80 mt-1">Top up the bracelet to get started</p>
+          </div>
+        `;
+        return;
+      }
+
+      el.transactionList.innerHTML = activeAcc.transactions
+        .map((tx) => {
+          const isPositive = tx.amount > 0;
+          const amountClass = isPositive ? 'text-successGreen font-bold' : 'text-ink font-semibold';
+          const signPrefix = isPositive ? '+' : '-';
+          return `
+            <div class="py-3 flex items-center justify-between gap-3">
+              <div class="flex items-center gap-3 min-w-0">
+                ${renderTxIcon(tx.category)}
+                <div class="min-w-0">
+                  <p class="text-[13px] font-semibold text-ink truncate">${tx.title}</p>
+                  <p class="text-[11px] text-muted mt-0.5 truncate">${tx.date}</p>
+                </div>
+              </div>
+              <span class="text-[13px] ${amountClass} shrink-0">
+                ${signPrefix} ${formatEGP(Math.abs(tx.amount), true)}
+              </span>
+            </div>
+          `;
+        })
+        .join('');
+    }
+
+    function renderPresetsAndAmount() {
+      const activeAcc = getActiveAccount();
+      const numericVal = getParsedTopUpAmount();
+      const formattedDisplay = formatTopUpReadout(state.topUpInput);
+
+      if (el.topUpRecipientLabel) {
+        el.topUpRecipientLabel.textContent = `${formatRecipientLabel(activeAcc)} · ${activeAcc.braceletId}`;
+      }
+      if (el.topUpSwitchChildBtn) {
+        el.topUpSwitchChildBtn.classList.toggle('hidden', state.accounts.length < 2);
+      }
+
+      el.topUpAmountDisplay.textContent = formattedDisplay;
+
+      const topUpPreviewHint = document.getElementById('topUpPreviewHint');
+      if (topUpPreviewHint) {
+        const projected = Number((activeAcc.balance + numericVal).toFixed(2));
+        topUpPreviewHint.textContent = numericVal > 0
+          ? `Adds +${formatEGP(numericVal, true)} · New balance: ${formatEGP(projected, true)}`
+          : 'Min EGP 10 · Max EGP 50,000 per top-up';
+      }
+
+      el.presetGrid.innerHTML = PRESET_AMOUNTS.map((preset) => {
+        const isSelected = numericVal === preset;
+        return `
+          <button
+            type="button"
+            data-preset="${preset}"
+            class="py-2 px-2 rounded-lg border text-xs font-semibold transition active:scale-95 ${
+              isSelected
+                ? 'border-ink bg-ink text-white'
+                : 'border-line bg-white hover:bg-canvas text-ink'
+            }"
+          >
+            ${preset.toLocaleString('en-US')}
+          </button>
+        `;
+      }).join('');
+
+      el.presetGrid.querySelectorAll('[data-preset]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const val = btn.getAttribute('data-preset');
+          state.topUpInput = String(val);
+          renderPresetsAndAmount();
+        });
+      });
+
+      const isValid = numericVal >= MIN_TOPUP_EGP && numericVal <= MAX_TOPUP_EGP;
+      el.topUpContinueBtn.disabled = !isValid;
+      el.topUpContinueBtn.textContent = isValid
+        ? `Continue · ${formatEGP(numericVal, false)}`
+        : 'Continue';
+    }
+
+    function buildNumericKeypad(containerEl, onKeyPress, includeDecimal = false) {
+      const keys = [
+        { label: '1', sub: '', code: '1' },
+        { label: '2', sub: 'ABC', code: '2' },
+        { label: '3', sub: 'DEF', code: '3' },
+        { label: '4', sub: 'GHI', code: '4' },
+        { label: '5', sub: 'JKL', code: '5' },
+        { label: '6', sub: 'MNO', code: '6' },
+        { label: '7', sub: 'PQRS', code: '7' },
+        { label: '8', sub: 'TUV', code: '8' },
+        { label: '9', sub: 'WXYZ', code: '9' },
+        includeDecimal
+          ? { label: '.', sub: '', code: '.' }
+          : { label: '', sub: '', code: 'empty' },
+        { label: '0', sub: '', code: '0' },
+        { label: '⌫', sub: '', code: 'backspace' },
+      ];
+
+      containerEl.innerHTML = keys
+        .map((k) => {
+          if (k.code === 'empty') {
+            return `<div class="h-12 rounded-md bg-transparent" aria-hidden="true"></div>`;
+          }
+          if (k.code === 'backspace') {
+            return `
+              <button
+                type="button"
+                data-keypad="${k.code}"
+                aria-label="Delete"
+                class="h-12 rounded-md bg-[#D1D5DB]/80 hover:bg-[#CBD5E1] active:bg-white text-ink font-semibold text-base flex items-center justify-center transition active:scale-[0.98]"
+              >
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.1" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2M3 12l6.414-6.414a2 2 0 011.414-.586H19a2 2 0 012 2v10a2 2 0 01-2 2h-8.172a2 2 0 01-1.414-.586L3 12z" />
+                </svg>
+              </button>
+            `;
+          }
+          return `
+            <button
+              type="button"
+              data-keypad="${k.code}"
+              class="h-12 rounded-md bg-white hover:bg-gray-50 active:bg-gray-200 text-ink shadow-sm flex flex-col items-center justify-center transition active:scale-[0.98]"
+            >
+              <span class="text-[17px] font-semibold leading-none">${k.label}</span>
+              ${k.sub ? `<span class="text-[9px] font-semibold tracking-widest text-muted mt-0.5">${k.sub}</span>` : ''}
+            </button>
+          `;
+        })
+        .join('');
+
+      containerEl.querySelectorAll('[data-keypad]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          onKeyPress(btn.getAttribute('data-keypad'));
+        });
+      });
+    }
+
+    function handleTopUpKey(code) {
+      let current = String(state.topUpInput ?? '').replace(/,/g, '');
+      if (code === 'backspace') {
+        state.topUpInput = current.slice(0, -1);
+      } else if (code === '.') {
+        if (!current.includes('.')) {
+          state.topUpInput = current ? `${current}.` : '0.';
+        }
+      } else {
+        const candidate = current === '0' ? code : `${current}${code}`;
+        const parts = candidate.split('.');
+        if (parts.length === 2 && parts[1].length > 2) return;
+        const asNum = Number(candidate);
+        if (Number.isFinite(asNum) && asNum > MAX_TOPUP_EGP) {
+          showToast(`Max top-up is ${formatEGP(MAX_TOPUP_EGP, false)}`);
+          return;
+        }
+        state.topUpInput = candidate.slice(0, 9);
+      }
+      renderPresetsAndAmount();
+    }
+
+    // Support physical keyboard typing on Top Up and PIN screens
+    document.addEventListener('keydown', (event) => {
+      if (!el.addPaymentModal.classList.contains('hidden')) return;
+      if (!el.accountConfigModal.classList.contains('hidden')) return;
+      const activeTag = document.activeElement ? document.activeElement.tagName : '';
+      if (activeTag === 'INPUT' || activeTag === 'SELECT' || activeTag === 'TEXTAREA') return;
+
+      if (state.screen === 'topup') {
+        if (/^[0-9]$/.test(event.key)) {
+          event.preventDefault();
+          handleTopUpKey(event.key);
+        } else if (event.key === '.') {
+          event.preventDefault();
+          handleTopUpKey('.');
+        } else if (event.key === 'Backspace') {
+          event.preventDefault();
+          handleTopUpKey('backspace');
+        } else if (event.key === 'Enter' && !el.topUpContinueBtn.disabled) {
+          event.preventDefault();
+          el.topUpContinueBtn.click();
+        }
+      } else if (state.screen === 'pin') {
+        if (/^[0-9]$/.test(event.key)) {
+          event.preventDefault();
+          handlePinKey(event.key);
+        } else if (event.key === 'Backspace') {
+          event.preventDefault();
+          handlePinKey('backspace');
+        } else if (event.key === 'Enter' && !el.pinContinueBtn.disabled) {
+          event.preventDefault();
+          el.pinContinueBtn.click();
+        }
+      }
+    });
+
+    function renderPaymentScreen() {
+      const activeAcc = getActiveAccount();
+      if (el.paymentRecipientLabel) {
+        el.paymentRecipientLabel.textContent = `${formatRecipientLabel(activeAcc)} · ${activeAcc.braceletId}`;
+      }
+      el.paymentScreenAmount.textContent = formatEGP(getParsedTopUpAmount(), true);
+
+      el.paymentOptionsContainer.innerHTML = PAYMENT_METHODS.map((pm) => {
+        const selected = pm.id === state.selectedPaymentId;
+        return `
+          <button
+            type="button"
+            data-payment-id="${pm.id}"
+            class="w-full p-3.5 rounded-2xl border flex items-center justify-between gap-3 text-left transition ${
+              selected
+                ? 'border-accentBlue bg-blue-50/30'
+                : 'border-line bg-white hover:bg-canvas'
+            }"
+          >
+            <div class="flex items-center gap-3 min-w-0">
+              ${renderPaymentBrandBadge(pm.brand)}
+              <div class="min-w-0">
+                <p class="text-sm font-bold text-ink truncate">${pm.name}</p>
+                <p class="text-xs text-muted truncate">${pm.detail}</p>
+              </div>
+            </div>
+
+            <!-- Radio Indicator -->
+            <span
+              class="w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 transition ${
+                selected ? 'border-accentBlue' : 'border-gray-300'
+              }"
+            >
+              ${selected ? '<span class="w-2.5 h-2.5 rounded-full bg-accentBlue"></span>' : ''}
+            </span>
+          </button>
+        `;
+      }).join('');
+
+      el.paymentOptionsContainer.querySelectorAll('[data-payment-id]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          state.selectedPaymentId = btn.getAttribute('data-payment-id');
+          renderPaymentScreen();
+        });
+      });
+    }
+
+    function renderPinBoxes() {
+      const slots = el.pinBoxesRow.querySelectorAll('[data-pin-slot]');
+      slots.forEach((slotEl, idx) => {
+        const digit = state.pinDigits[idx];
+        const isActive = idx === state.pinDigits.length && state.pinDigits.length < 4;
+
+        slotEl.textContent = digit ? '●' : '';
+        slotEl.classList.remove('border-line', 'border-ink', 'border-accentBlue', 'bg-canvas');
+        if (digit) {
+          slotEl.classList.add('border-ink', 'bg-canvas');
+        } else if (isActive) {
+          slotEl.classList.add('border-accentBlue', 'bg-white');
+        } else {
+          slotEl.classList.add('border-line', 'bg-white');
+        }
+      });
+
+      el.pinContinueBtn.disabled = state.pinDigits.length !== 4;
+    }
+
+    function handlePinKey(code) {
+      if (code === 'backspace') {
+        state.pinDigits.pop();
+      } else if (state.pinDigits.length < 4 && /^[0-9]$/.test(code)) {
+        state.pinDigits.push(code);
+      }
+      renderPinBoxes();
+    }
+
+    function completeTopUpTransaction() {
+      const amount = getParsedTopUpAmount();
+      if (amount < MIN_TOPUP_EGP || amount > MAX_TOPUP_EGP) {
+        goToScreen('topup');
+        return;
+      }
+
+      const activeAcc = getActiveAccount();
+      const previousBalance = Number(Number(activeAcc.balance || 0).toFixed(2));
+      const payment = getSelectedPayment();
+      const updatedBalance = Number((previousBalance + amount).toFixed(2));
+      activeAcc.balance = updatedBalance;
+      const refCode = `BR-${Math.floor(1000 + Math.random() * 9000)}`;
+      const timeNow = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      const dateLabel = `Today, ${timeNow}`;
+      const recipientFull = `${formatRecipientLabel(activeAcc)} · ${activeAcc.braceletId}`;
+
+      state.lastReceipt = {
+        amount,
+        previousBalance,
+        recipientFull,
+        paymentName: payment.name,
+        refCode,
+        updatedBalance,
+      };
+
+      activeAcc.transactions.unshift({
+        id: `tx-${Date.now()}`,
+        title: `Bracelet Top Up (${payment.name})`,
+        date: dateLabel,
+        amount,
+        category: 'topup',
+      });
+
+      el.successAmountText.textContent = formatEGP(amount, true);
+      el.successMetaText.textContent = `Credited +${formatEGP(amount, true)} to ${recipientFull} · ${dateLabel}`;
+      if (el.receiptHolderName) {
+        el.receiptHolderName.textContent = recipientFull;
+      }
+      el.receiptPaymentName.textContent = payment.name;
+      el.receiptRefCode.textContent = refCode;
+      el.receiptUpdatedBalance.textContent = formatEGP(updatedBalance, true);
+
+      goToScreen('success');
+      showToast(`Added ${formatEGP(amount, true)} for ${activeAcc.childName}`);
+    }
+
+    function goToScreen(nextScreen) {
+      state.screen = nextScreen;
+
+      const screens = {
+        wallet: el.walletScreen,
+        topup: el.topUpScreen,
+        payment: el.paymentScreen,
+        pin: el.pinScreen,
+        success: el.successScreen,
+      };
+
+      Object.entries(screens).forEach(([key, node]) => {
+        if (key === nextScreen) {
+          node.classList.remove('hidden');
+        } else {
+          node.classList.add('hidden');
+        }
+      });
+
+      if (nextScreen === 'success') {
+        el.topBar.classList.add('hidden');
+        return;
+      }
+
+      el.topBar.classList.remove('hidden');
+
+      const titles = {
+        wallet: 'Bracelet Wallet',
+        topup: 'Top Up',
+        payment: 'Choose Payment',
+        pin: 'Enter Your PIN',
+      };
+      el.topBarTitle.textContent = titles[nextScreen] || 'Bracelet Wallet';
+
+      if (nextScreen === 'wallet') {
+        el.backIcon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" />`;
+        renderWalletScreen();
+      } else {
+        el.backIcon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />`;
+      }
+
+      if (nextScreen === 'topup') {
+        renderPresetsAndAmount();
+      } else if (nextScreen === 'payment') {
+        renderPaymentScreen();
+      } else if (nextScreen === 'pin') {
+        const activeAcc = getActiveAccount();
+        if (el.pinRecipientPill) {
+          el.pinRecipientPill.textContent = `For ${formatRecipientLabel(activeAcc)} · ${activeAcc.braceletId}`;
+        }
+        state.pinDigits = [];
+        renderPinBoxes();
+      }
+    }
+
+    // Event bindings
+    el.backBtn.addEventListener('click', () => {
+      const activeAcc = getActiveAccount();
+      if (state.screen === 'wallet') {
+        showToast(`NFC Pass ${activeAcc.braceletId} (${activeAcc.childName}) ready to scan`);
+      } else if (state.screen === 'topup') {
+        goToScreen('wallet');
+      } else if (state.screen === 'payment') {
+        goToScreen('topup');
+      } else if (state.screen === 'pin') {
+        goToScreen('payment');
+      }
+    });
+
+    el.moreActionBtn.addEventListener('click', () => {
+      openAccountModal('edit');
+    });
+
+    el.topUpSwitchChildBtn.addEventListener('click', () => {
+      if (state.accounts.length < 2) return;
+      const currentIdx = state.accounts.findIndex((a) => a.id === state.activeAccountId);
+      const nextIdx = (currentIdx + 1) % state.accounts.length;
+      state.activeAccountId = state.accounts[nextIdx].id;
+      renderPresetsAndAmount();
+      const switched = getActiveAccount();
+      showToast(`Switched to ${formatRecipientLabel(switched)}`);
+    });
+
+    el.openTopUpBtn.addEventListener('click', () => {
+      state.topUpInput = '1900';
+      goToScreen('topup');
+    });
+
+    el.topUpContinueBtn.addEventListener('click', () => {
+      const amount = getParsedTopUpAmount();
+      if (amount < MIN_TOPUP_EGP || amount > MAX_TOPUP_EGP) {
+        showToast(`Enter between ${formatEGP(MIN_TOPUP_EGP, false)} and ${formatEGP(MAX_TOPUP_EGP, false)}`);
+        return;
+      }
+      goToScreen('payment');
+    });
+
+    el.paymentContinueBtn.addEventListener('click', () => {
+      goToScreen('pin');
+    });
+
+    // Add Bank Card or Wallet Modal Logic
+    let activeAddTab = 'card';
+
+    function switchAddPaymentTab(tab) {
+      activeAddTab = tab;
+      el.bankFormError.classList.add('hidden');
+      el.walletFormError.classList.add('hidden');
+
+      if (tab === 'card') {
+        el.tabBankCardBtn.className = 'py-2 px-3 rounded-lg text-xs font-bold bg-white text-ink shadow-sm transition';
+        el.tabMobileWalletBtn.className = 'py-2 px-3 rounded-lg text-xs font-bold text-muted hover:text-ink transition';
+        el.bankCardForm.classList.remove('hidden');
+        el.mobileWalletForm.classList.add('hidden');
+      } else {
+        el.tabMobileWalletBtn.className = 'py-2 px-3 rounded-lg text-xs font-bold bg-white text-ink shadow-sm transition';
+        el.tabBankCardBtn.className = 'py-2 px-3 rounded-lg text-xs font-bold text-muted hover:text-ink transition';
+        el.mobileWalletForm.classList.remove('hidden');
+        el.bankCardForm.classList.add('hidden');
+      }
+    }
+
+    function openAddPaymentModal(initialTab = 'card') {
+      el.bankCardForm.reset();
+      el.mobileWalletForm.reset();
+      el.detectedCardBrand.textContent = 'Card';
+      switchAddPaymentTab(initialTab);
+      el.addPaymentModal.classList.remove('hidden');
+    }
+
+    function closeAddPaymentModal() {
+      el.addPaymentModal.classList.add('hidden');
+    }
+
+    function detectCardBrand(digits) {
+      if (digits.startsWith('4')) return { label: 'Visa', brand: 'visa' };
+      if (/^(5[1-5]|2[2-7])/.test(digits)) return { label: 'Mastercard', brand: 'mastercard' };
+      return { label: 'Bank Card', brand: 'card' };
+    }
+
+    el.cardNumberInput.addEventListener('input', (e) => {
+      const digitsOnly = e.target.value.replace(/\D/g, '').slice(0, 16);
+      const grouped = digitsOnly.match(/.{1,4}/g)?.join(' ') || '';
+      e.target.value = grouped;
+      el.detectedCardBrand.textContent = digitsOnly.length > 0 ? detectCardBrand(digitsOnly).label : 'Card';
+    });
+
+    el.cardExpiryInput.addEventListener('input', (e) => {
+      const digits = e.target.value.replace(/\D/g, '').slice(0, 4);
+      e.target.value = digits.length > 2 ? `${digits.slice(0, 2)}/${digits.slice(2)}` : digits;
+    });
+
+    el.cardCvvInput.addEventListener('input', (e) => {
+      e.target.value = e.target.value.replace(/\D/g, '').slice(0, 4);
+    });
+
+    el.walletPhoneInput.addEventListener('input', (e) => {
+      const digits = e.target.value.replace(/\D/g, '').slice(0, 11);
+      if (digits.length <= 3) {
+        e.target.value = digits;
+      } else if (digits.length <= 7) {
+        e.target.value = `${digits.slice(0, 3)} ${digits.slice(3)}`;
+      } else {
+        e.target.value = `${digits.slice(0, 3)} ${digits.slice(3, 7)} ${digits.slice(7)}`;
+      }
+    });
+
+    el.bankCardForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const holder = el.cardHolderInput.value.trim();
+      const rawDigits = el.cardNumberInput.value.replace(/\D/g, '');
+      const expiry = el.cardExpiryInput.value.trim();
+      const cvv = el.cardCvvInput.value.trim();
+      const nickname = el.cardNicknameInput.value.trim();
+
+      if (holder.length < 2) {
+        el.bankFormError.textContent = 'Please enter the cardholder name.';
+        el.bankFormError.classList.remove('hidden');
+        return;
+      }
+      if (rawDigits.length < 13 || rawDigits.length > 16) {
+        el.bankFormError.textContent = 'Enter a valid 13 to 16-digit card number.';
+        el.bankFormError.classList.remove('hidden');
+        return;
+      }
+      const expiryMatch = expiry.match(/^(0[1-9]|1[0-2])\/(\d{2})$/);
+      if (!expiryMatch) {
+        el.bankFormError.textContent = 'Enter expiry as MM/YY (e.g. 08/28).';
+        el.bankFormError.classList.remove('hidden');
+        return;
+      }
+      if (cvv.length < 3 || cvv.length > 4) {
+        el.bankFormError.textContent = 'Enter a valid 3 or 4-digit CVV.';
+        el.bankFormError.classList.remove('hidden');
+        return;
+      }
+
+      const brandInfo = detectCardBrand(rawDigits);
+      const last4 = rawDigits.slice(-4);
+      const newId = `card-${Date.now()}`;
+      const displayName = nickname || `${brandInfo.label} •••• ${last4}`;
+
+      PAYMENT_METHODS.unshift({
+        id: newId,
+        name: displayName,
+        detail: `${holder} · Exp ${expiry}`,
+        brand: brandInfo.brand,
+      });
+
+      state.selectedPaymentId = newId;
+      closeAddPaymentModal();
+      renderPaymentScreen();
+      showToast(`Added ${displayName}`);
+    });
+
+    el.mobileWalletForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const provider = el.walletProviderSelect.value;
+      const rawPhone = el.walletPhoneInput.value.replace(/\D/g, '');
+      const alias = el.walletAliasInput.value.trim();
+
+      if (!/^01[0125]\d{8}$/.test(rawPhone)) {
+        el.walletFormError.textContent = 'Enter a valid 11-digit Egyptian wallet number (01X XXXX XXXX).';
+        el.walletFormError.classList.remove('hidden');
+        return;
+      }
+
+      const formattedPhone = `${rawPhone.slice(0, 3)} ${rawPhone.slice(3, 7)} ${rawPhone.slice(7)}`;
+      const newId = `wallet-${Date.now()}`;
+      const displayName = alias ? `${provider} (${alias})` : provider;
+
+      PAYMENT_METHODS.unshift({
+        id: newId,
+        name: displayName,
+        detail: `${formattedPhone} · Instant EGP`,
+        brand: 'wallet',
+      });
+
+      state.selectedPaymentId = newId;
+      closeAddPaymentModal();
+      renderPaymentScreen();
+      showToast(`Added ${displayName}`);
+    });
+
+    el.openAddPaymentBtn.addEventListener('click', () => openAddPaymentModal('card'));
+    el.closeAddPaymentModalBtn.addEventListener('click', closeAddPaymentModal);
+    el.tabBankCardBtn.addEventListener('click', () => switchAddPaymentTab('card'));
+    el.tabMobileWalletBtn.addEventListener('click', () => switchAddPaymentTab('wallet'));
+    el.addPaymentModal.addEventListener('click', (e) => {
+      if (e.target === el.addPaymentModal) closeAddPaymentModal();
+    });
+
+    // Add Account & Configure Bracelet Modal Logic
+    let accountModalMode = 'add'; // 'add' | 'edit'
+    let selectedRelationChoice = 'Daughter';
+
+    function setRelationChipSelection(choice, customText = '') {
+      selectedRelationChoice = choice;
+      document.querySelectorAll('.relation-chip').forEach((chip) => {
+        const val = chip.getAttribute('data-relation-choice');
+        if (val === choice) {
+          chip.className = 'relation-chip py-2 px-3 rounded-xl border border-ink bg-ink text-white text-xs font-bold transition';
+        } else {
+          chip.className = 'relation-chip py-2 px-3 rounded-xl border border-line bg-white text-ink hover:bg-canvas text-xs font-bold transition';
+        }
+      });
+
+      if (choice === 'Custom') {
+        el.customRelationInput.classList.remove('hidden');
+        el.customRelationInput.value = customText;
+      } else {
+        el.customRelationInput.classList.add('hidden');
+        el.customRelationInput.value = '';
+      }
+    }
+
+    document.querySelectorAll('.relation-chip').forEach((chip) => {
+      chip.addEventListener('click', () => {
+        setRelationChipSelection(chip.getAttribute('data-relation-choice'));
+      });
+    });
+
+    function suggestNextBraceletId() {
+      const nextNum = 4092 + state.accounts.length;
+      return `#CB-${nextNum}`;
+    }
+
+    function openAccountModal(mode = 'add') {
+      accountModalMode = mode;
+      el.accountFormError.classList.add('hidden');
+
+      if (mode === 'edit') {
+        const activeAcc = getActiveAccount();
+        el.accountModalEyebrow.textContent = 'CONFIGURE BRACELET';
+        el.accountConfigModalTitle.textContent = 'Edit Name & Bracelet';
+        el.childNameInput.value = activeAcc.childName;
+        el.braceletCodeInput.value = activeAcc.braceletId;
+        el.initialBalanceFieldWrap.classList.add('hidden');
+        el.saveAccountSubmitBtn.textContent = 'Save Changes';
+
+        if (activeAcc.relation === 'Daughter' || activeAcc.relation === 'Son') {
+          setRelationChipSelection(activeAcc.relation);
+        } else {
+          setRelationChipSelection('Custom', activeAcc.relation || '');
+        }
+
+        el.deleteAccountBtn.classList.toggle('hidden', state.accounts.length <= 1);
+      } else {
+        el.accountModalEyebrow.textContent = 'FAMILY BRACELETS';
+        el.accountConfigModalTitle.textContent = 'Add Bracelet Account';
+        el.childNameInput.value = '';
+        el.braceletCodeInput.value = suggestNextBraceletId();
+        el.initialBalanceInput.value = '0';
+        el.initialBalanceFieldWrap.classList.remove('hidden');
+        el.deleteAccountBtn.classList.add('hidden');
+        el.saveAccountSubmitBtn.textContent = 'Add Bracelet';
+        setRelationChipSelection('Daughter');
+      }
+
+      el.accountConfigModal.classList.remove('hidden');
+    }
+
+    function closeAccountModal() {
+      el.accountConfigModal.classList.add('hidden');
+    }
+
+    el.closeAccountModalBtn.addEventListener('click', closeAccountModal);
+    el.accountConfigModal.addEventListener('click', (e) => {
+      if (e.target === el.accountConfigModal) closeAccountModal();
+    });
+
+    el.deleteAccountBtn.addEventListener('click', () => {
+      if (state.accounts.length <= 1) return;
+      const removed = getActiveAccount();
+      state.accounts = state.accounts.filter((a) => a.id !== removed.id);
+      state.activeAccountId = state.accounts[0].id;
+      closeAccountModal();
+      renderWalletScreen();
+      showToast(`Removed ${removed.childName}'s bracelet`);
+    });
+
+    el.accountConfigForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const childName = el.childNameInput.value.trim();
+      const rawCode = el.braceletCodeInput.value.trim().toUpperCase();
+      const relation =
+        selectedRelationChoice === 'Custom'
+          ? el.customRelationInput.value.trim()
+          : selectedRelationChoice;
+
+      if (childName.length < 1) {
+        el.accountFormError.textContent = "Please enter your child's name.";
+        el.accountFormError.classList.remove('hidden');
+        return;
+      }
+
+      const formattedCode = rawCode
+        ? rawCode.startsWith('#')
+          ? rawCode
+          : `#${rawCode}`
+        : suggestNextBraceletId();
+
+      if (accountModalMode === 'edit') {
+        const activeAcc = getActiveAccount();
+        activeAcc.childName = childName;
+        activeAcc.relation = relation;
+        activeAcc.braceletId = formattedCode;
+        closeAccountModal();
+        renderWalletScreen();
+        showToast(`Updated ${formatRecipientLabel(activeAcc)}`);
+      } else {
+        const startBal = Math.max(0, Math.min(MAX_TOPUP_EGP, Number(el.initialBalanceInput.value) || 0));
+        const newId = `acc-${Date.now()}`;
+        const initialTxs =
+          startBal > 0
+            ? [
+                {
+                  id: `tx-${Date.now()}`,
+                  title: 'Initial Bracelet Balance',
+                  date: 'Today',
+                  amount: Number(startBal.toFixed(2)),
+                  category: 'topup',
+                },
+              ]
+            : [];
+
+        state.accounts.push({
+          id: newId,
+          childName,
+          relation,
+          braceletId: formattedCode,
+          holderName: 'Canteen Dining Pass',
+          balance: Number(startBal.toFixed(2)),
+          transactions: initialTxs,
+        });
+
+        state.activeAccountId = newId;
+        closeAccountModal();
+        renderWalletScreen();
+        showToast(`Added ${childName} (${formattedCode})`);
+      }
+    });
+
+    el.pinContinueBtn.addEventListener('click', () => {
+      if (state.pinDigits.length === 4) {
+        completeTopUpTransaction();
+      }
+    });
+
+    el.backToWalletBtn.addEventListener('click', () => {
+      goToScreen('wallet');
+    });
+
+    // Initialize keypads and initial screen
+    buildNumericKeypad(el.topUpKeypad, handleTopUpKey, true);
+    buildNumericKeypad(el.pinKeypad, handlePinKey, false);
+    goToScreen('wallet');
+  </script>
+</body>
+</html>
